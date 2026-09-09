@@ -11,10 +11,6 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), { placeholder: undefined });
 
-const emit = defineEmits<{
-  search: [dni: string];
-}>();
-
 const model = defineModel<string>({ default: "" });
 
 const focused = ref(false);
@@ -43,8 +39,8 @@ function handleMove(event: MouseEvent) {
   glow.value = { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
 
-function submit() {
-  if (digits.value.length > 0) emit("search", digits.value);
+function clear() {
+  model.value = "";
 }
 </script>
 
@@ -89,13 +85,15 @@ function submit() {
       <input v-model="display" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" maxlength="9"
         :placeholder="props.placeholder ?? t('hero.searchPlaceholder')"
         class="h-12 w-full min-w-0 bg-transparent pr-16 font-medium tracking-[0.22em] text-foreground transition-colors duration-300 outline-none placeholder:tracking-normal placeholder:text-muted-foreground focus:placeholder:text-muted-foreground/70"
-        @focus="focused = true" @blur="focused = false" @keydown.enter="submit" />
+        @focus="focused = true" @blur="focused = false" />
 
-      <button type="button" :aria-label="t('hero.searchAria')"
-        class="absolute right-2 flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-gradient-to-br from-[#f2b134] via-[#eda53f] to-[#d98a2b] text-[#201405] shadow-lg shadow-[#f2b134]/25 transition-all duration-300 hover:scale-105 hover:shadow-[#f2b134]/40 active:scale-95"
-        @click="submit">
-        <Icon name="lucide:arrow-right" class="size-5" />
-      </button>
+      <Transition name="clear-btn" appear>
+        <button v-if="digits.length > 0" type="button" :aria-label="t('hero.clearAria')"
+          class="absolute right-2 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-border/50 bg-muted/50 text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:border-border hover:bg-muted hover:text-foreground active:scale-90"
+          @click="clear">
+          <Icon name="lucide:x" class="size-4" />
+        </button>
+      </Transition>
     </div>
   </div>
 </template>
@@ -113,5 +111,16 @@ function submit() {
   to {
     transform: rotate(360deg);
   }
+}
+
+.clear-btn-enter-active,
+.clear-btn-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.clear-btn-enter-from,
+.clear-btn-leave-to {
+  opacity: 0;
+  transform: scale(0.85);
 }
 </style>
