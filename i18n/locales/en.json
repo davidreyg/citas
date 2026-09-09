@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Check your pending appointment | Hospital de Huaycán",
-    "description": "Check if you have a pending medical appointment at Hospital de Huaycán. Enter your ID and verify your appointment status in seconds."
+    "description": "Check if you have a pending medical appointment at Hospital de Huaycán. Enter your document number and verify your appointment status in seconds."
   },
   "brand": "Hospital de Huaycán",
   "header": {
@@ -18,13 +18,14 @@
   "hero": {
     "title1": "Do you have a pending",
     "title2": "appointment?",
-    "subtitle": "Check online if you have an appointment at Hospital de Huaycán. Enter your ID and view your appointment status instantly.",
-    "searchPlaceholder": "Enter your ID (8 digits)",
+    "subtitle": "Check online if you have an appointment at Hospital de Huaycán. Enter your document number and view your appointment status instantly.",
+    "searchPlaceholder": "Enter your document number (8 digits)",
     "search": "Check appointment",
     "searchAria": "Check my pending appointment",
+    "clearAria": "Clear document field",
     "searching": "Checking…",
     "privacy": "Your data is used only to verify your appointment · Hospital de Huaycán",
-    "errorIncompleteDni": "Enter your full ID (8 digits) to continue."
+    "errorIncompleteDocument": "Enter your full document number (8 digits) to continue."
   },
   "result": {
     "hasTitle": "You have a pending appointment",
@@ -37,7 +38,7 @@
       "location": "Site"
     },
     "noneTitle": "No pending appointments",
-    "noneBody": "We couldn't find any pending appointments for ID {dni} at Hospital de Huaycán.",
+    "noneBody": "We couldn't find any pending appointments for document {documento} at Hospital de Huaycán.",
     "clinic": "Hospital de Huaycán",
     "newSearch": "New search"
   },
