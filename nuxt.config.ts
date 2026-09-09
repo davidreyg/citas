@@ -2,6 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || "https://consultatucita.hospitalhuaycan.gob.pe";
+const apiBase = process.env.NUXT_PUBLIC_API_BASE || "http://localhost:3001";
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
@@ -14,11 +15,28 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@nuxt/fonts",
     "@nuxtjs/i18n",
+    "@peterbud/nuxt-query",
   ],
+
+  nuxtQuery: {
+    autoImports: ["useQuery", "useMutation", "useQueryClient"],
+    devtools: true,
+    queryClientOptions: {
+      defaultOptions: {
+        queries: {
+          staleTime: 1000 * 60 * 5,
+          gcTime: 1000 * 60 * 10,
+          refetchOnWindowFocus: false,
+          retry: 1,
+        },
+      },
+    },
+  },
 
   runtimeConfig: {
     public: {
       siteUrl,
+      apiBase,
     },
   },
 
