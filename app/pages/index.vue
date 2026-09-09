@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cn } from "@inspira-ui/plugins";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const { t, locale } = useI18n();
 const localePath = useLocalePath();
@@ -61,42 +61,39 @@ useSeoMeta({
   twitterDescription: () => t("meta.description"),
 });
 
-const dni = ref("");
-const searching = ref(false);
-const result = ref<null | { hasAppointment: boolean; dni: string }>(null);
-const error = ref<string | null>(null);
+const numeroDocumento = ref("");
+const hasSearched = ref(false);
+
+const queryClient = useQueryClient();
+const { data, isPending, isError, error: queryError, refetch } = useCitaQuery(numeroDocumento);
+
+const localError = ref<string | null>(null);
+const showResult = computed(() => hasSearched.value && !isPending.value && data.value);
+const searching = computed(() => hasSearched.value && isPending.value);
 
 function onSearch() {
-  const digits = dni.value.replace(/\D/g, "");
+  const digits = numeroDocumento.value.replace(/\D/g, "");
   if (digits.length < 8) {
-    result.value = null;
-    error.value = t("hero.errorIncompleteDni");
+    localError.value = t("hero.errorIncompleteDocument");
     return;
   }
 
-  error.value = null;
-  result.value = null;
-  searching.value = true;
-
-  window.setTimeout(() => {
-    searching.value = false;
-    result.value = {
-      hasAppointment: digits.endsWith("1"),
-      dni: digits,
-    };
-  }, 1200);
+  localError.value = null;
+  hasSearched.value = true;
+  refetch();
 }
 
 function onNewSearch() {
-  dni.value = "";
-  result.value = null;
-  error.value = null;
+  numeroDocumento.value = "";
+  hasSearched.value = false;
+  localError.value = null;
+  queryClient.removeQueries({ queryKey: queryKeys.cita.all });
 }
 </script>
 
 <template>
   <div class="min-h-svh bg-background text-foreground selection:bg-[#f2b134]/40">
-    <UiAuroraBackground class="!h-auto min-h-svh">
+    <UiAuroraBackground class="h-auto! min-h-svh">
       <div class="pointer-events-none absolute inset-0 z-0">
         <UiParticlesBg :quantity="70" color="#f2b134"
           class="absolute inset-0 h-full w-full opacity-50 [mask-image:radial-gradient(ellipse_65%_55%_at_50%_45%,black,transparent_78%)]" />
@@ -122,7 +119,7 @@ function onNewSearch() {
       </header>
 
       <main class="relative z-10 flex w-full flex-col items-center px-6 pt-28 pb-16 md:pt-32">
-        <div v-if="!result && !searching">
+        <div v-if="!showResult && !searching">
           <div
             class="mb-6 inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/50 px-4 py-1.5 text-xs font-medium tracking-wide text-muted-foreground backdrop-blur-md">
             <Icon name="lucide:calendar-check" class="size-3.5 text-primary" />
@@ -139,7 +136,7 @@ function onNewSearch() {
           </p>
 
           <div class="mt-10 w-full max-w-xl">
-            <UiDniInput v-model="dni" :placeholder="t('hero.searchPlaceholder')" />
+            <UiDocumentInput v-model="numeroDocumento" :placeholder="t('hero.searchPlaceholder')" />
           </div>
 
           <div class="mt-6 flex justify-center">
@@ -163,33 +160,47 @@ function onNewSearch() {
           <p class="mt-4 text-lg text-muted-foreground">{{ t("hero.searching") }}</p>
         </div>
 
-        <div v-else-if="result" class="w-full max-w-xl">
+        <div v-else-if="showResult && data" class="w-full max-w-xl">
           <div role="status" aria-live="polite"
             class="overflow-hidden rounded-3xl border border-border/70 bg-card/50 p-8 backdrop-blur-xl">
             <div class="flex flex-col items-center text-center">
               <span
                 class="mb-5 grid size-14 place-items-center rounded-full"
                 :class="cn(
-                  result.hasAppointment
+                  data.hasAppointment
                     ? 'border border-primary/30 bg-primary/10 text-primary'
                     : 'border border-border bg-muted/50 text-muted-foreground',
                 )">
-                <Icon :name="result.hasAppointment ? 'lucide:calendar-check' : 'lucide:calendar-x'" class="size-7" />
+                <Icon :name="data.hasAppointment ? 'lucide:calendar-check' : 'lucide:calendar-x'" class="size-7" />
               </span>
 
               <h2 class="font-display text-3xl font-semibold tracking-tight">
-                {{ result.hasAppointment ? t("result.hasTitle") : t("result.noneTitle") }}
+                {{ data.hasAppointment ? t("result.hasTitle") : t("result.noneTitle") }}
               </h2>
 
               <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {{
-                  result.hasAppointment
+                  data.hasAppointment
                     ? t("result.hasBody")
-                    : t("result.noneBody", { dni: result.dni })
+                    : t("result.noneBody", { documento: data.numeroDocumento })
                 }}
               </p>
 
-              <div v-if="result.hasAppointment"
+              <div v-if="data.hasAppointment && data.appointment"
+                class="mt-6 w-full rounded-2xl border border-border/70 bg-muted/40 p-5 text-left">
+                <dl class="space-y-3 text-sm">
+                  <div class="flex items-center justify-between gap-4">
+                    <dt class="text-muted-foreground">{{ t("result.appointment.specialty") }}</dt>
+                    <dd class="text-foreground font-medium">{{ data.appointment.specialty || t("result.specialtyUnknown") }}</dd>
+                  </div>
+                  <div class="flex items-center justify-between gap-4">
+                    <dt class="text-muted-foreground">{{ t("result.appointment.location") }}</dt>
+                    <dd class="text-primary font-medium">{{ data.appointment.location || t("result.clinic") }}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div v-else-if="data.hasAppointment"
                 class="mt-6 w-full rounded-2xl border border-border/70 bg-muted/40 p-5 text-left">
                 <dl class="space-y-3 text-sm">
                   <div class="flex items-center justify-between gap-4">
@@ -211,8 +222,11 @@ function onNewSearch() {
           </div>
         </div>
 
-        <p v-if="error" class="mt-6 max-w-xl rounded-2xl border border-[#e08b9b]/30 bg-[#e08b9b]/10 px-6 py-4 text-center text-sm text-[#e08b9b]" role="alert">
-          {{ error }}
+        <p v-if="localError" class="mt-6 max-w-xl rounded-2xl border border-[#e08b9b]/30 bg-[#e08b9b]/10 px-6 py-4 text-center text-sm text-[#e08b9b]" role="alert">
+          {{ localError }}
+        </p>
+        <p v-else-if="isError && hasSearched" class="mt-6 max-w-xl rounded-2xl border border-[#e08b9b]/30 bg-[#e08b9b]/10 px-6 py-4 text-center text-sm text-[#e08b9b]" role="alert">
+          {{ queryError?.message || t("hero.errorGeneric") }}
         </p>
       </main>
 

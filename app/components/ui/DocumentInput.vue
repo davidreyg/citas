@@ -63,7 +63,7 @@ function clear() {
     <div
       class="pointer-events-none absolute -inset-px overflow-hidden rounded-[1.45rem] opacity-80 blur-[0.5px] group-focus-within:opacity-100">
       <div class="absolute top-1/2 left-1/2 aspect-square w-[185%] -translate-x-1/2 -translate-y-1/2">
-        <div class="dni-ring size-full" style="
+        <div class="document-ring size-full" style="
             background: conic-gradient(
               from 0deg,
               transparent 0deg,
@@ -99,11 +99,11 @@ function clear() {
 </template>
 
 <style scoped>
-.dni-ring {
-  animation: dni-ring-spin 7s linear infinite;
+.document-ring {
+  animation: document-ring-spin 7s linear infinite;
 }
 
-@keyframes dni-ring-spin {
+@keyframes document-ring-spin {
   from {
     transform: rotate(0deg);
   }
