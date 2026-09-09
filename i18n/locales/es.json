@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "title": "Consulta tu cita pendiente | Hospital de Huaycán",
+    "description": "Consulta si tienes una cita médica pendiente en el Hospital de Huaycán. Ingresa tu DNI y verifica el estado de tu cita en segundos."
+  },
+  "brand": "Hospital de Huaycán",
+  "header": {
+    "badge": "Consulta de citas en línea",
+    "slogan": "Su salud, nuestra prioridad"
+  },
+  "locale": {
+    "switchTo": "Cambiar idioma a {locale}"
+  },
+  "theme": {
+    "toLight": "Cambiar a modo claro",
+    "toDark": "Cambiar a modo oscuro"
+  },
+  "hero": {
+    "title1": "¿Tienes una cita",
+    "title2": "pendiente?",
+    "subtitle": "Verifica en línea si tienes una cita en el Hospital de Huaycán. Ingresa tu DNI y consulta el estado de tu cita al instante.",
+    "searchPlaceholder": "Ingrese su DNI (8 dígitos)",
+    "search": "Consultar cita",
+    "searchAria": "Consultar mi cita pendiente",
+    "searching": "Consultando…",
+    "privacy": "Tus datos se usan únicamente para verificar tu cita · Hospital de Huaycán",
+    "errorIncompleteDni": "Ingresa tu DNI completo (8 dígitos) para continuar."
+  },
+  "result": {
+    "hasTitle": "Tienes una cita pendiente",
+    "specialtyUnknown": "Consulta médica general",
+    "hasBody": "Registramos una cita programada a tu nombre en el Hospital de Huaycán.",
+    "appointment": {
+      "specialty": "Especialidad",
+      "date": "Fecha",
+      "time": "Hora",
+      "location": "Sede"
+    },
+    "noneTitle": "No tienes citas pendientes",
+    "noneBody": "No encontramos citas pendientes para el DNI {dni} en el Hospital de Huaycán.",
+    "clinic": "Hospital de Huaycán",
+    "newSearch": "Nueva consulta"
+  },
+  "footer": {
+    "copyright": "© 2026 Hospital de Huaycán · Ate, Lima · Perú"
+  }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://consultatucita.hospitalhuaycan.gob.pe/sitemap.xml
